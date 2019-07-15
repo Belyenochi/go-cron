@@ -23,6 +23,7 @@ const (
 	Dow                                 // Day of week field, default *
 	DowOptional                         // Optional day of week field, default *
 	Descriptor                          // Allow descriptors such as @monthly, @weekly, etc.
+	Year
 )
 
 var places = []ParseOption{
@@ -32,12 +33,14 @@ var places = []ParseOption{
 	Dom,
 	Month,
 	Dow,
+	Year,
 }
 
 var defaults = []string{
 	"0",
 	"0",
 	"0",
+	"*",
 	"*",
 	"*",
 	"*",
@@ -123,6 +126,7 @@ func (p Parser) Parse(spec string) (Schedule, error) {
 		dayofmonth = field(fields[3], dom)
 		month      = field(fields[4], months)
 		dayofweek  = field(fields[5], dow)
+		year       = field(fields[6], year)
 	)
 	if err != nil {
 		return nil, err
@@ -135,6 +139,7 @@ func (p Parser) Parse(spec string) (Schedule, error) {
 		Dom:    dayofmonth,
 		Month:  month,
 		Dow:    dayofweek,
+		Year:   year,
 	}, nil
 }
 
@@ -324,6 +329,7 @@ func parseDescriptor(descriptor string) (Schedule, error) {
 			Dom:    1 << dom.min,
 			Month:  1 << months.min,
 			Dow:    all(dow),
+			Year:   all(year),
 		}, nil
 
 	case "@monthly":
@@ -334,6 +340,7 @@ func parseDescriptor(descriptor string) (Schedule, error) {
 			Dom:    1 << dom.min,
 			Month:  all(months),
 			Dow:    all(dow),
+			Year:   all(year),
 		}, nil
 
 	case "@weekly":
@@ -344,6 +351,7 @@ func parseDescriptor(descriptor string) (Schedule, error) {
 			Dom:    all(dom),
 			Month:  all(months),
 			Dow:    1 << dow.min,
+			Year:   all(year),
 		}, nil
 
 	case "@daily", "@midnight":
@@ -354,6 +362,7 @@ func parseDescriptor(descriptor string) (Schedule, error) {
 			Dom:    all(dom),
 			Month:  all(months),
 			Dow:    all(dow),
+			Year:   all(year),
 		}, nil
 
 	case "@hourly":
@@ -364,6 +373,7 @@ func parseDescriptor(descriptor string) (Schedule, error) {
 			Dom:    all(dom),
 			Month:  all(months),
 			Dow:    all(dow),
+			Year:   all(year),
 		}, nil
 	}
 

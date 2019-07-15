@@ -7,9 +7,9 @@ Callers may register Funcs to be invoked on a given schedule.  Cron will run
 them in their own goroutines.
 
 	c := cron.New()
-	c.AddFunc("0 30 * * * *", func() { fmt.Println("Every hour on the half hour") })
-	c.AddFunc("@hourly",      func() { fmt.Println("Every hour") })
-	c.AddFunc("@every 1h30m", func() { fmt.Println("Every hour thirty") })
+	c.AddFunc("0 30 * * * * *", func() { fmt.Println("Every hour on the half hour") })
+	c.AddFunc("@hourly",        func() { fmt.Println("Every hour") })
+	c.AddFunc("@every 1h30m",   func() { fmt.Println("Every hour thirty") })
 	c.Start()
 	..
 	// Funcs are invoked in their own goroutine, asynchronously.
@@ -24,7 +24,7 @@ them in their own goroutines.
 
 CRON Expression Format
 
-A cron expression represents a set of times, using 6 space-separated fields.
+A cron expression represents a set of times, using 7 space-separated fields.
 
 	Field name   | Mandatory? | Allowed values  | Allowed special characters
 	----------   | ---------- | --------------  | --------------------------
@@ -34,6 +34,7 @@ A cron expression represents a set of times, using 6 space-separated fields.
 	Day of month | Yes        | 1-31            | * / , - ?
 	Month        | Yes        | 1-12 or JAN-DEC | * / , -
 	Day of week  | Yes        | 0-6 or SUN-SAT  | * / , - ?
+    Year         | Yes        | 1970-9999       | * / , - ?
 
 Note: Month and Day-of-week field values are case insensitive.  "SUN", "Sun",
 and "sun" are equally accepted.
@@ -76,15 +77,15 @@ You may use one of several pre-defined schedules in place of a cron expression.
 
 	Entry                  | Description                                | Equivalent To
 	-----                  | -----------                                | -------------
-	@yearly (or @annually) | Run once a year, midnight, Jan. 1st        | 0 0 0 1 1 *
-	@monthly               | Run once a month, midnight, first of month | 0 0 0 1 * *
-	@weekly                | Run once a week, midnight between Sat/Sun  | 0 0 0 * * 0
-	@daily (or @midnight)  | Run once a day, midnight                   | 0 0 0 * * *
-	@hourly                | Run once an hour, beginning of hour        | 0 0 * * * *
+	@yearly (or @annually) | Run once a year, midnight, Jan. 1st        | 0 0 0 1 1 * *
+	@monthly               | Run once a month, midnight, first of month | 0 0 0 1 * * *
+	@weekly                | Run once a week, midnight between Sat/Sun  | 0 0 0 * * 0 *
+	@daily (or @midnight)  | Run once a day, midnight                   | 0 0 0 * * * *
+	@hourly                | Run once an hour, beginning of hour        | 0 0 * * * * *
 
 Intervals
 
-You may also schedule a job to execute at fixed intervals, starting at the time it's added 
+You may also schedule a job to execute at fixed intervals, starting at the time it's added
 or cron is run. This is supported by formatting the cron spec like this:
 
     @every <duration>
